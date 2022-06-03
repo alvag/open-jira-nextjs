@@ -3,7 +3,8 @@ import { Entry } from '../../interfaces';
 
 type UIActionType =
     | { type: '[Entry] Add-Entry', payload: Entry }
-    | { type: '[Entry] Update-Entry', payload: Entry };
+    | { type: '[Entry] Update-Entry', payload: Entry }
+    | { type: '[Entry] Load-Entries', payload: Entry[] };
 
 export const entriesReducer = ( state: UIState, action: UIActionType ): UIState => {
     switch ( action.type ) {
@@ -23,6 +24,11 @@ export const entriesReducer = ( state: UIState, action: UIActionType ): UIState 
                     }
                     return entry;
                 } )
+            };
+        case '[Entry] Load-Entries':
+            return {
+                ...state,
+                entries: [ ...action.payload ]
             };
         default:
             return state;

@@ -31,7 +31,7 @@ export const NewEntry = () => {
                         <>
                             <TextField fullWidth sx={ { marginTop: 2, marginBottom: 1 } }
                                        placeholder={ 'Nueva entrada' }
-                                       multiline
+                                // multiline
                                        value={ inputValue }
                                 // helperText={ touched && inputValue.length === 0 && 'Ingrese un valor' }
                                        error={ touched && inputValue.length === 0 }
