@@ -8,8 +8,6 @@ type Data =
 
 export default function handler( req: NextApiRequest, res: NextApiResponse<Data> ) {
 
-    const { id } = req.query;
-
     switch ( req.method ) {
         case 'PUT':
             return updateEntry( req, res );
@@ -18,7 +16,6 @@ export default function handler( req: NextApiRequest, res: NextApiResponse<Data>
         default:
             return res.status( 400 ).json( { message: 'Method not allowed' } );
     }
-
 
 }
 
