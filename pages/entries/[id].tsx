@@ -20,18 +20,19 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {Layout} from '../../components/layouts';
 import {EntryStatus} from '../../interfaces';
 import {GetServerSideProps} from "next";
-import mongoose from "mongoose";
+import {dbEntries} from "../../database";
+import {IEntry} from "../../models";
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
 interface Props {
-    id: string;
+    entry: IEntry;
 }
 
-export const EntryPage: FC<Props> = ({id}) => {
+export const EntryPage: FC<Props> = ({entry}) => {
 
-    const [inputValue, setInputValue] = useState('');
-    const [status, setStatus] = useState<EntryStatus>('pending');
+    const [inputValue, setInputValue] = useState(entry.description);
+    const [status, setStatus] = useState<EntryStatus>(entry.status);
     const [touched, setTouched] = useState(false);
 
     const isNotValid = useMemo(() => touched && inputValue.length === 0, [inputValue, touched]);
@@ -56,11 +57,11 @@ export const EntryPage: FC<Props> = ({id}) => {
     }
 
     return (
-        <Layout title={'....'}>
+        <Layout title={inputValue.substring(0, 20) + '...'}>
             <Grid container justifyContent={'center'} sx={{marginTop: 2}}>
                 <Grid item xs={12} sm={8} md={6}>
                     <Card>
-                        <CardHeader title={`Entrada: ${inputValue}`} subheader={`Creado hace .... minutos`}/>
+                        <CardHeader title={`Entrada:`} subheader={`Creado hace ${entry.createdAt} minutos`}/>
 
                         <CardContent>
                             <TextField sx={{marginTop: 2, marginBottom: 1}}
@@ -119,7 +120,8 @@ export const EntryPage: FC<Props> = ({id}) => {
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const {id} = params as { id: string };
 
-    if (!mongoose.isValidObjectId(id)) {
+    const entry = await dbEntries.getEntryById(id);
+    if (!entry) {
         return {
             redirect: {
                 destination: '/',
@@ -130,7 +132,7 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
 
     return {
         props: {
-            id
+            entry
         }
     }
 }
