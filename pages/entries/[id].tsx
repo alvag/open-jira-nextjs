@@ -1,4 +1,4 @@
-import {ChangeEvent, FC, useMemo, useState} from "react";
+import {ChangeEvent, FC, useContext, useMemo, useState} from "react";
 import {
     capitalize,
     Button,
@@ -22,6 +22,7 @@ import {EntryStatus} from '../../interfaces';
 import {GetServerSideProps} from "next";
 import {dbEntries} from "../../database";
 import {IEntry} from "../../models";
+import {EntriesContext} from "../../context/entries";
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
@@ -30,6 +31,8 @@ interface Props {
 }
 
 export const EntryPage: FC<Props> = ({entry}) => {
+
+    const {updateEntry} = useContext(EntriesContext);
 
     const [inputValue, setInputValue] = useState(entry.description);
     const [status, setStatus] = useState<EntryStatus>(entry.status);
@@ -46,14 +49,8 @@ export const EntryPage: FC<Props> = ({entry}) => {
     }
 
     const onSave = () => {
-        if (inputValue.length > 0) {
-            console.log(inputValue, status);
-            setInputValue('');
-            setStatus('pending');
-            setTouched(false);
-        } else {
-            setTouched(true);
-        }
+        if (inputValue.trim().length === 0) return;
+        updateEntry({...entry, description: inputValue, status}, true);
     }
 
     return (
@@ -65,11 +62,12 @@ export const EntryPage: FC<Props> = ({entry}) => {
 
                         <CardContent>
                             <TextField sx={{marginTop: 2, marginBottom: 1}}
+                                       rows="3"
                                        fullWidth
                                        autoFocus
+                                       multiline
                                        value={inputValue}
                                        onChange={onTextFileChange}
-                                       placeholder={'Nueva entrada'}
                                        label={'Nueva entrada'}
                                        helperText={isNotValid && 'Ingrese un valor'}
                                        onBlur={() => setTouched(true)}
