@@ -23,6 +23,8 @@ import {GetServerSideProps} from "next";
 import {dbEntries} from "../../database";
 import {IEntry} from "../../models";
 import {EntriesContext} from "../../context/entries";
+import {dateFunctions} from "../../utils";
+
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
@@ -58,7 +60,8 @@ export const EntryPage: FC<Props> = ({entry}) => {
             <Grid container justifyContent={'center'} sx={{marginTop: 2}}>
                 <Grid item xs={12} sm={8} md={6}>
                     <Card>
-                        <CardHeader title={`Entrada:`} subheader={`Creado hace ${entry.createdAt} minutos`}/>
+                        <CardHeader title={`Entrada:`}
+                                    subheader={`Creado hace: ${dateFunctions.getFormatDistanceToNow(entry.createdAt)}`}/>
 
                         <CardContent>
                             <TextField sx={{marginTop: 2, marginBottom: 1}}
